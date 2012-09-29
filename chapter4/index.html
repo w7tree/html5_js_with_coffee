@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>slide show</title>
+  <script src="http://code.jquery.com/jquery-1.8.1.min.js" type="text/javascript"></script>
+  <script src="slideshow.js" type="text/javascript"></script>
+  <style type="text/css">
+    #main {
+      border: 1px solid #999;
+      width: 640px;
+      height: 480px;
+    }
+
+    #thumbArea {
+      border: 1px solid #999;
+      width: 620px;
+      padding: 10px;
+    }
+
+    .thumb {
+      width: 90px;
+      height: 90px;
+      border: 2px solid #ccc;
+      opacity: 0.6;
+    }
+
+    .select {
+      border: 2px solid #333;
+      opacity: 1.0;
+    }
+  </style>
+</head>
+<body>
+  <img id="main" src="img/sample0.jpg" alt="" />
+  <div id="thumbArea">
+    <img src="img/sample0.jpg" alt="" class="thumb select" />
+    <img src="img/sample1.jpg" alt="" class="thumb" />
+    <img src="img/sample2.jpg" alt="" class="thumb" />
+    <img src="img/sample3.jpg" alt="" class="thumb" />
+    <img src="img/sample4.jpg" alt="" class="thumb" />
+  </div>
+</body>
+</html>
