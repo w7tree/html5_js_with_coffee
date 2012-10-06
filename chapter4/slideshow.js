@@ -3,21 +3,19 @@ var SelectGallery;
 
 SelectGallery = (function() {
 
-  function SelectGallery(imgArray) {
-    this.imgArray = imgArray;
+  function SelectGallery() {
     this.mainDom = null;
     this.listDom = null;
   }
 
   SelectGallery.prototype.select = function() {
-    var imgArray, listDom, mainDom;
-    imgArray = this.imgArray;
+    var listDom, mainDom;
     mainDom = this.mainDom;
     listDom = this.listDom;
     return $(listDom).click(function() {
       var idx;
       idx = $(listDom).index(this);
-      $(mainDom).attr("src", imgArray[idx]);
+      $(mainDom).attr("src", this.src);
       $(listDom).removeClass("select");
       return $(this).addClass("select");
     });
@@ -32,9 +30,8 @@ SelectGallery = (function() {
 })();
 
 $(function() {
-  var imgArray, selectgallery;
-  imgArray = ["img/sample0.jpg", "img/sample1.jpg", "img/sample2.jpg", "img/sample3.jpg", "img/sample4.jpg"];
-  selectgallery = new SelectGallery(imgArray);
+  var selectgallery;
+  selectgallery = new SelectGallery;
   selectgallery.mainDom = "#main";
   selectgallery.listDom = ".thumb";
   return selectgallery.start();

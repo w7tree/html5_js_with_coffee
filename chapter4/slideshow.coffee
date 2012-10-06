@@ -1,16 +1,14 @@
 class SelectGallery
-  constructor: (imgArray) ->
-    @imgArray = imgArray
+  constructor: ->
     @mainDom = null
     @listDom = null
 
   select: ->
-    imgArray = @imgArray
     mainDom = @mainDom
     listDom = @listDom
     $(listDom).click(->
       idx = $(listDom).index(@)
-      $(mainDom).attr("src",imgArray[idx])
+      $(mainDom).attr("src",@.src)
       $(listDom).removeClass("select")
       $(@).addClass("select")
     )
@@ -20,15 +18,7 @@ class SelectGallery
 
 
 $ ->
-  imgArray = [
-    "img/sample0.jpg",
-    "img/sample1.jpg",
-    "img/sample2.jpg",
-    "img/sample3.jpg",
-    "img/sample4.jpg"
-  ]
-
-  selectgallery = new SelectGallery(imgArray)
+  selectgallery = new SelectGallery
   selectgallery.mainDom = "#main"
   selectgallery.listDom = ".thumb"
   selectgallery.start()
