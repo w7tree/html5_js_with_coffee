@@ -3,26 +3,23 @@ var SelectGallery;
 
 SelectGallery = (function() {
 
-  function SelectGallery() {
-    this.mainDom = null;
-    this.listDom = null;
+  function SelectGallery(main_dom, list_dom) {
+    this.main_dom = main_dom;
+    this.list_dom = list_dom;
+    this.select();
   }
 
   SelectGallery.prototype.select = function() {
-    var listDom, mainDom;
-    mainDom = this.mainDom;
-    listDom = this.listDom;
-    return $(listDom).click(function() {
+    var list_dom, main_dom;
+    main_dom = this.main_dom;
+    list_dom = this.list_dom;
+    return $(list_dom).click(function() {
       var idx;
-      idx = $(listDom).index(this);
-      $(mainDom).attr("src", this.src);
-      $(listDom).removeClass("select");
+      idx = $(list_dom).index(this);
+      $(main_dom).attr("src", this.src);
+      $(list_dom).removeClass("select");
       return $(this).addClass("select");
     });
-  };
-
-  SelectGallery.prototype.start = function() {
-    return this.select();
   };
 
   return SelectGallery;
@@ -31,8 +28,5 @@ SelectGallery = (function() {
 
 $(function() {
   var selectgallery;
-  selectgallery = new SelectGallery;
-  selectgallery.mainDom = "#main";
-  selectgallery.listDom = ".thumb";
-  return selectgallery.start();
+  return selectgallery = new SelectGallery("#main", ".thumb");
 });
