@@ -44,12 +44,21 @@ SlideGallery = (function(_super) {
 
   __extends(SlideGallery, _super);
 
-  function SlideGallery(main_dom, list_dom) {
+  function SlideGallery(main_dom, list_dom, audio, volume) {
+    if (audio == null) {
+      audio = null;
+    }
+    if (volume == null) {
+      volume = null;
+    }
     SlideGallery.__super__.constructor.apply(this, arguments);
     this.timerId = 0;
     this.current_image_idx = 0;
+    this.audio = document.getElementById(audio);
     this.change_image();
-    this.click_event();
+    if (volume !== null) {
+      this.change_volume(volume);
+    }
   }
 
   SlideGallery.prototype.change_current_image_idx = function() {
@@ -77,6 +86,9 @@ SlideGallery = (function(_super) {
 
   SlideGallery.prototype.start = function() {
     var _this = this;
+    if (this.audio !== null) {
+      this.audio.play();
+    }
     this.change_image();
     if (this.timerId === 0) {
       return this.timerId = setInterval(function() {
@@ -87,27 +99,40 @@ SlideGallery = (function(_super) {
   };
 
   SlideGallery.prototype.pause = function() {
+    if (this.audio !== null) {
+      this.audio.pause();
+    }
     clearInterval(this.timerId);
     return this.timerId = 0;
   };
 
   SlideGallery.prototype.stop = function() {
+    if (this.audio !== null) {
+      this.audio.load();
+    }
     this.current_image_idx = 0;
     this.change_image();
     clearInterval(this.timerId);
     return this.timerId = 0;
   };
 
-  SlideGallery.prototype.click_event = function() {
+  SlideGallery.prototype.click_event = function(start, pause, stop) {
     var _this = this;
-    $('#button_start').click(function() {
+    $(start).click(function() {
       return _this.start();
     });
-    $('#button_pause').click(function() {
+    $(pause).click(function() {
       return _this.pause();
     });
-    return $('#button_stop').click(function() {
+    return $(stop).click(function() {
       return _this.stop();
+    });
+  };
+
+  SlideGallery.prototype.change_volume = function(volume) {
+    var _this = this;
+    return $(volume).change(function() {
+      return _this.audio.volume = $(volume).val();
     });
   };
 
@@ -116,6 +141,8 @@ SlideGallery = (function(_super) {
 })(Gallery);
 
 $(function() {
+  var slide_gallery;
   new SelectGallery("#main", ".thumb");
-  return new SlideGallery("#main", ".thumb");
+  slide_gallery = new SlideGallery("#main", ".thumb", 'audio', '#volume');
+  return slide_gallery.click_event('#button_start', '#button_pause', '#button_stop');
 });

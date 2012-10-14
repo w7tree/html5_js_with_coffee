@@ -21,12 +21,18 @@ class SelectGallery extends Gallery
 
 
 class SlideGallery extends Gallery
-  constructor: (main_dom,list_dom)->
+  constructor: (main_dom,list_dom,audio=null,volume=null)->
     super
     @timerId = 0
     @current_image_idx = 0
+    @audio = document.getElementById(audio)
     @change_image()
-    @click_event()
+    @change_volume(volume) unless volume == null
+
+    # audioについて
+    # @audio = $("#audio")とすると動かない
+    # $("#audio")は、[object Object]を返す
+    # document.getElementById("audio")は、[object HTMLAudioElement]を返す
 
   change_current_image_idx: ->
     @current_image_idx += 1
@@ -45,6 +51,7 @@ class SlideGallery extends Gallery
     $(select_img).addClass("select")
 
   start: ->
+    @audio.play() unless @audio == null
     @change_image()
 
     if @timerId == 0
@@ -55,37 +62,36 @@ class SlideGallery extends Gallery
         ,500)
 
   pause: ->
+    @audio.pause() unless @audio == null
     clearInterval(@timerId)
     @timerId = 0
 
   stop: ->
+    @audio.load() unless @audio == null
     @current_image_idx = 0
     @change_image()
     clearInterval(@timerId)
     @timerId = 0
 
-  click_event: ->
-    $('#button_start').click(=>
+  click_event: (start,pause,stop)->
+    $(start).click(=>
       @start()
     )
-    $('#button_pause').click(=>
+    $(pause).click(=>
       @pause()
     )
-    $('#button_stop').click(=>
+    $(stop).click(=>
       @stop()
+    )
+
+  change_volume: (volume)->
+    $(volume).change(=>
+      @audio.volume = $(volume).val()
     )
 
 
 $ ->
   new SelectGallery("#main",".thumb")
-  new SlideGallery("#main",".thumb")
+  slide_gallery = new SlideGallery("#main",".thumb",'audio','#volume')
+  slide_gallery.click_event('#button_start','#button_pause','#button_stop')
 
-  # $('#button_start').click(->
-  #   slide_gallery.start()
-  # )
-  # $('#button_pause').click(->
-  #   slide_gallery.pause()
-  # )
-  # $('#button_stop').click(->
-  #   slide_gallery.stop()
-  # )
