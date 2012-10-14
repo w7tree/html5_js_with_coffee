@@ -59,6 +59,12 @@
     <button type="button" id="button_stop">
       <img src="img/stop.png" alt="stop" />
     </button>
+    Volume [0.0 - 1.0]:
+    <input type="range" id="volume" min="0" max="1" step="0.1" value="1.0" />
   </div>
+  <audio id="audio" loop>
+    <source src="sample.mp3"></source>
+    <source id="source" src="sample.ogg"></source>
+  </audio>
 </body>
 </html>

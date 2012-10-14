@@ -1,3 +1,32 @@
+class Mixin
+  augment: (t) ->
+    (t[n] = m unless n == 'augment' or !this[n].prototype?) for n, m of this
+
+class Audio extends Mixin
+  audio: (audio) ->
+    unless audio == null
+      document.getElementById(audio)
+    else
+      null
+
+  change_volume: (volume) ->
+    unless volume == null
+      $(volume).change(=>
+        @audio.volume = $(volume).val()
+      )
+
+class ClickEvent extends Mixin
+  click_event: (start,pause,stop)->
+    $(start).click(=>
+      @start()
+    )
+    $(pause).click(=>
+      @pause()
+    )
+    $(stop).click(=>
+      @stop()
+    )
+
 class Gallery
   constructor: (main_dom,list_dom)->
     @main_dom = main_dom
@@ -21,12 +50,21 @@ class SelectGallery extends Gallery
 
 
 class SlideGallery extends Gallery
-  constructor: (main_dom,list_dom)->
+  constructor: (main_dom,list_dom,audio=null,volume=null)->
     super
+    Audio::augment @
+    ClickEvent::augment @
     @timerId = 0
+    @change_speed = 1000
     @current_image_idx = 0
     @change_image()
-    @click_event()
+    @audio = Audio::audio(audio)
+    @change_volume(volume)
+
+    # audioについて
+    # @audio = $("#audio")とすると動かない
+    # $("#audio")は、[object Object]を返す
+    # document.getElementById("audio")は、[object HTMLAudioElement]を返す
 
   change_current_image_idx: ->
     @current_image_idx += 1
@@ -45,6 +83,7 @@ class SlideGallery extends Gallery
     $(select_img).addClass("select")
 
   start: ->
+    @audio.play() unless @audio == null
     @change_image()
 
     if @timerId == 0
@@ -52,40 +91,29 @@ class SlideGallery extends Gallery
         setInterval(=>
           @change_current_image_idx()
           @change_image()
-        ,500)
+        ,@change_speed)
 
   pause: ->
+    @audio.pause() unless @audio == null
+
     clearInterval(@timerId)
     @timerId = 0
 
   stop: ->
+    # audioにはstopメソッドがないので、loadで代用
+    @audio.load() unless @audio == null
+
     @current_image_idx = 0
     @change_image()
     clearInterval(@timerId)
     @timerId = 0
 
-  click_event: ->
-    $('#button_start').click(=>
-      @start()
-    )
-    $('#button_pause').click(=>
-      @pause()
-    )
-    $('#button_stop').click(=>
-      @stop()
-    )
+
 
 
 $ ->
   new SelectGallery("#main",".thumb")
-  new SlideGallery("#main",".thumb")
-
-  # $('#button_start').click(->
-  #   slide_gallery.start()
-  # )
-  # $('#button_pause').click(->
-  #   slide_gallery.pause()
-  # )
-  # $('#button_stop').click(->
-  #   slide_gallery.stop()
-  # )
+  slide_gallery = new SlideGallery("#main",".thumb",'audio','#volume')
+  # slide_gallery = new SlideGallery("#main",".thumb") #audio,volumeのnullテスト用
+  slide_gallery.click_event('#button_start','#button_pause','#button_stop')
+  # slide_gallery.change_speed = 100
