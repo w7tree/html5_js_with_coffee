@@ -15,6 +15,18 @@ class Audio extends Mixin
         @audio.volume = $(volume).val()
       )
 
+class ClickEvent extends Mixin
+  click_event: (start,pause,stop)->
+    $(start).click(=>
+      @start()
+    )
+    $(pause).click(=>
+      @pause()
+    )
+    $(stop).click(=>
+      @stop()
+    )
+
 class Gallery
   constructor: (main_dom,list_dom)->
     @main_dom = main_dom
@@ -41,6 +53,7 @@ class SlideGallery extends Gallery
   constructor: (main_dom,list_dom,audio=null,volume=null)->
     super
     Audio::augment @
+    ClickEvent::augment @
     @timerId = 0
     @change_speed = 1000
     @current_image_idx = 0
@@ -70,6 +83,7 @@ class SlideGallery extends Gallery
     $(select_img).addClass("select")
 
   start: ->
+    @audio.play() unless @audio == null
     @change_image()
 
     if @timerId == 0
@@ -80,28 +94,20 @@ class SlideGallery extends Gallery
         ,@change_speed)
 
   pause: ->
+    @audio.pause() unless @audio == null
+
     clearInterval(@timerId)
     @timerId = 0
 
   stop: ->
+    # audioにはstopメソッドがないので、loadで代用
+    @audio.load() unless @audio == null
+
     @current_image_idx = 0
     @change_image()
     clearInterval(@timerId)
     @timerId = 0
 
-  click_event: (start,pause,stop)->
-    $(start).click(=>
-      @start()
-      @audio.play() unless @audio == null
-    )
-    $(pause).click(=>
-      @pause()
-      @audio.pause() unless @audio == null
-    )
-    $(stop).click(=>
-      @stop()
-      @audio.load() unless @audio == null
-    )
 
 
 
